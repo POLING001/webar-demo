@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
@@ -7,7 +6,7 @@
 <meta charset="utf-8">
 
 <meta name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 
 
 <title>
@@ -15,67 +14,72 @@ content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 </title>
 
 
-<!-- A-Frame -->
-<script src="https://aframe.io/releases/1.5.0/aframe.min.js">
-</script>
+<script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 
 
-<!-- MindAR -->
-<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js">
-</script>
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
 
 
 
 <style>
 
 
-body{
+html,body{
 
 margin:0;
 
-overflow:hidden;
-
-font-family:"Microsoft YaHei";
-
-}
-
-
-
-/* 顶部提示 */
-
-#tip{
-
-
-position:absolute;
-
-
-top:30px;
-
-
-left:0;
-
+padding:0;
 
 width:100%;
 
+height:100%;
 
-text-align:center;
-
-
-font-size:22px;
-
-
-color:white;
-
-
-z-index:999;
-
-
-text-shadow:
-0 0 5px black;
-
+overflow:hidden;
 
 }
 
+
+
+/* 全屏AR */
+
+a-scene{
+
+position:absolute;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+height:100%;
+
+}
+
+
+
+
+#tip{
+
+position:absolute;
+
+top:20px;
+
+left:0;
+
+width:100%;
+
+text-align:center;
+
+color:white;
+
+font-size:22px;
+
+z-index:999;
+
+text-shadow:0 0 8px black;
+
+}
 
 
 </style>
@@ -89,10 +93,9 @@ text-shadow:
 <body>
 
 
-
 <div id="tip">
 
-正在启动AR，请稍候...
+正在启动摄像头...
 
 </div>
 
@@ -108,9 +111,13 @@ imageTargetSrc:assets/targets.mind;
 
 autoStart:true;
 
-uiLoading:yes;
+filterMinCF:0.0001;
 
-uiScanning:yes;
+filterBeta:0.001;
+
+uiLoading:no;
+
+uiScanning:no;
 
 uiError:yes;
 
@@ -120,9 +127,6 @@ uiError:yes;
 embedded
 
 
-color-space="sRGB"
-
-
 renderer="
 
 colorManagement:true;
@@ -130,24 +134,19 @@ colorManagement:true;
 "
 
 
-vr-mode-ui="
-
-enabled:false
-
-"
+vr-mode-ui="enabled:false"
 
 
-device-orientation-permission-ui="
 
-enabled:false
+device-orientation-permission-ui="enabled:false"
 
-"
 
 
 >
 
 
-<!-- 视频资源 -->
+
+
 
 <a-assets>
 
@@ -162,17 +161,13 @@ loop
 
 muted
 
-autoplay
-
 playsinline
 
 webkit-playsinline
 
 preload="auto"
 
->
-
-</video>
+></video>
 
 
 </a-assets>
@@ -181,62 +176,75 @@ preload="auto"
 
 
 
-<!-- 摄像机 -->
-
 <a-camera
 
 position="0 0 0"
 
 look-controls="enabled:false"
 
->
-
-</a-camera>
+></a-camera>
 
 
 
-
-
-
-<!-- 图片识别目标 -->
 
 
 <a-entity
+
+id="target"
 
 mindar-image-target="targetIndex:0"
 
 >
 
 
+<!-- 测试红框 -->
 
-<!-- 视频覆盖区域 -->
+<a-plane
 
-<a-video
+id="testPlane"
 
+color="red"
 
-src="#arVideo"
+opacity="0"
 
+width="1"
 
-width="2"
+height="0.56"
 
-
-height="1.12"
-
-
-position="0 0 0.05"
-
-
-rotation="0 0 0"
-
+position="0 0 0"
 
 >
 
 
-</a-video>
+</a-plane>
+
+
+
+
+
+<a-video
+
+
+id="videoPlane"
+
+src="#arVideo"
+
+width="1"
+
+height="0.56"
+
+position="0 0 0.01"
+
+
+visible="false"
+
+
+></a-video>
 
 
 
 </a-entity>
+
 
 
 
@@ -247,108 +255,84 @@ rotation="0 0 0"
 
 
 
-
-
 <script>
 
 
-document.addEventListener(
-"DOMContentLoaded",
-
-()=>{
-
-
-let target =
-document.querySelector(
-"[mindar-image-target]"
-);
+window.onload=function(){
 
 
 
-let video =
-document.querySelector(
-"#arVideo"
-);
+let target=document.querySelector("#target");
+
+
+let video=document.querySelector("#arVideo");
+
+
+let videoPlane=document.querySelector("#videoPlane");
+
+
+let testPlane=document.querySelector("#testPlane");
+
+
+let tip=document.querySelector("#tip");
 
 
 
-let tip =
-document.querySelector(
-"#tip"
-);
+console.log(target);
 
 
 
-
-
-// 页面启动
-
-tip.innerHTML=
-"请扫描民兵支前图片";
+tip.innerHTML="请扫描民兵支前图片";
 
 
 
-
-
-// 识别成功
 
 
 target.addEventListener(
 
 "targetFound",
 
-()=>{
+function(){
+
 
 
 console.log(
-"AR识别成功"
+"================="
 );
 
-
-
-alert(
-"识别成功，正在播放历史复原视频"
+console.log(
+"识别成功"
 );
 
 
 
 tip.innerHTML=
-"民兵支前历史场景复原";
+"识别成功，正在播放";
 
 
 
+alert("识别成功");
 
 
-video.play()
+// 显示测试
 
-.then(()=>{
-
-
-console.log(
-"视频播放成功"
+testPlane.setAttribute(
+"opacity",
+"0.5"
 );
 
 
-})
 
-.catch(
-(error)=>{
+// 显示视频
 
-
-console.log(
-"视频播放失败",
-error
+videoPlane.setAttribute(
+"visible",
+"true"
 );
 
 
-alert(
-"视频播放失败，请点击屏幕后重试"
-);
 
-
-}
-
-);
+video.play();
 
 
 
@@ -359,16 +343,13 @@ alert(
 
 
 
-
-
-// 离开识别范围
 
 
 target.addEventListener(
 
 "targetLost",
 
-()=>{
+function(){
 
 
 console.log(
@@ -377,7 +358,8 @@ console.log(
 
 
 tip.innerHTML=
-"请重新扫描民兵支前图片";
+"请重新扫描";
+
 
 
 video.pause();
@@ -390,8 +372,6 @@ video.pause();
 
 
 }
-
-);
 
 
 
