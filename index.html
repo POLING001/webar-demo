@@ -1,762 +1,176 @@
 <!DOCTYPE html>
 <html>
-
-
 <head>
-
-
-<meta charset="utf-8">
-
-
-<meta name="viewport"
-content="
-width=device-width,
-initial-scale=1.0,
-maximum-scale=1.0,
-user-scalable=no">
-
-
-<title>
-AR数字还原战场
-</title>
-
-
-
-<script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-
-
-<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
-
-
-
-<style>
-
-
-html,
-body{
-
-
-margin:0;
-
-padding:0;
-
-
-width:100%;
-
-height:100%;
-
-
-overflow:hidden;
-
-
-background:transparent;
-
-
-}
-
-
-
-a-scene{
-
-
-position:absolute;
-
-top:0;
-
-left:0;
-
-
-width:100%;
-
-height:100%;
-
-
-}
-
-video.mindar-video{
-
-
-position:absolute!important;
-
-
-top:0;
-
-
-left:0;
-
-
-width:100%!important;
-
-
-height:100%!important;
-
-
-object-fit:cover;
-
-
-z-index:0;
-
-
-}
-
-
-
-.a-canvas{
-
-
-position:absolute!important;
-
-
-top:0;
-
-
-left:0;
-
-
-z-index:1;
-
-
-}
-
-
-#tip{
-
-
-position:absolute;
-
-
-top:20px;
-
-
-left:0;
-
-
-width:100%;
-
-
-text-align:center;
-
-
-color:white;
-
-
-font-size:22px;
-
-
-z-index:999;
-
-
-text-shadow:
-0 0 8px black;
-
-
-font-family:
-Arial,
-"Microsoft YaHei";
-
-
-}
-
-
-
-</style>
-
-
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AR数字还原战场</title>
+
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: transparent;
+    }
+    a-scene {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    video.mindar-video {
+      position: absolute !important;
+      top: 0;
+      left: 0;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover;
+      z-index: 0;
+    }
+    .a-canvas {
+      position: absolute !important;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+    #tip {
+      position: absolute;
+      top: 20px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      color: white;
+      font-size: 22px;
+      z-index: 999;
+      text-shadow: 0 0 8px black;
+      font-family: Arial, "Microsoft YaHei";
+    }
+  </style>
 </head>
-
-
-
-
-
-
 <body>
 
-
-
-<div id="tip">
-
-正在启动摄像头...
-
-</div>
-
-
-
-
-
-
-
-
-<a-scene
-
-style="background:transparent;"
-
-mindar-image="
-
-imageTargetSrc:assets/targets.mind;
-autoStart:true;
-
-filterMinCF:0.0001;
-
-filterBeta:0.001;
-
-uiLoading:no;
-
-uiScanning:no;
-
-uiError:yes;
-
-"
-
-
-
-embedded
-
-
-
-renderer="
-
-antialias:true;
-
-alpha:true;
-
-colorManagement:true;
-
-physicallyCorrectLights:true;
-
-"
-
-
-
-vr-mode-ui="enabled:false"
-
-
-
-device-orientation-permission-ui="enabled:false"
-
-
->
-
-
-
-
-
-
-
-
-<a-assets>
-
-
-
-<!--
-
-动态视频
-
-JS会自动替换src
-
--->
-
-<video
-
-id="arVideo"
-
-loop
-
-playsinline
-
-webkit-playsinline
-
-preload="auto"
-
-muted
-
-crossorigin="anonymous"
-
->
-
-</video>
-
-
-
-</a-assets>
-
-
-
-
-
-
-
-
-
-<a-camera
-
-position="0 0 0"
-
-look-controls="enabled:false"
-
->
-
-</a-camera>
-
-
-
-
-
-
-
-
-
-<!--
-
-自动识别所有target
-
--->
-
-
-<a-entity
-
-id="target1"
-
-mindar-image-target="targetIndex:0"
-
->
-
-<a-plane
-
-id="videoPlane"
-
-width="1"
-
-height="0.56"
-
-position="0 0 0.03"
-
-visible="false"
-
-material="
-shader:flat;
-src:#arVideo;
-side:double;
-"
-
->
-
-</a-plane>
-
-
-</a-entity>
-
-
-
-<a-plane
-
-
-id="videoPlane"
-
-
-
-width="1"
-
-
-height="0.56"
-
-
-
-position="0 0 0.03"
-
-
-
-visible="false"
-
-
-
-material="
-
-shader:flat;
-
-src:#arVideo;
-
-side:double;
-
-"
-
-
->
-
-</a-plane>
-
-
-
-
-</a-entity>
-
-
-
-
-
-
-
-
-</a-scene>
-
-
-
-
-
-
-
-
-
-<script>
-
-
-window.onload=function(){
-
-
-
-let target =
-document.querySelector("#target");
-
-
-
-let video =
-document.querySelector("#arVideo");
-
-
-
-let videoPlane =
-document.querySelector("#videoPlane");
-
-
-
-let tip =
-document.querySelector("#tip");
-
-
-
-let currentVideo="";
-
-
-
-
-
-tip.innerHTML=
-"请扫描孟良崮遗址";
-
-
-
-
-
-
-
-/*
-========================
-首次点击解锁声音
-========================
-*/
-
-
-let unlocked=false;
-
-
-
-document.body.addEventListener(
-
-"click",
-
-function(){
-
-
-
-if(unlocked)
-return;
-
-
-
-document.body.addEventListener(
-
-"click",
-
-function(){
-
-
-video.muted=false;
-
-
-}
-
-);
-
-.then(()=>{
-
-
-
-video.pause();
-
-
-video.currentTime=0;
-
-
-unlocked=true;
-
-
-
-console.log(
-"声音权限解锁"
-);
-
-
-
-})
-
-
-.catch(err=>{
-
-
-console.log(err);
-
-
-});
-
-
-
-}
-
-);
-
-
-
-
-
-
-
-
-
-/*
-========================
-识别图片
-========================
-*/
-
-
-target.addEventListener(
-
-"targetFound",
-
-function(event){
-
-
-
-console.log(
-"识别成功"
-);
-
-
-
-
-
-/*
-
-获取识别图编号
-
-MindAR:
-
-第一张:
-index=0
-
-第二张:
-index=1
-
-
-*/
-
-let index =
-event.detail.index;
-
-
-
-
-
-
-// 文件编号从1开始
-
-let videoNumber =
-index + 1;
-
-
-
-
-
-let videoPath =
-
-"assets/video"
-+
-videoNumber
-+
-".mp4";
-
-
-
-
-
-
-
-console.log(
-
-"加载视频:",
-
-videoPath
-
-);
-
-
-
-
-
-tip.innerHTML=
-
-"识别成功，播放视频";
-
-
-
-
-
-
-
-// 如果换了一张图
-
-if(currentVideo!==videoPath){
-
-
-
-video.pause();
-
-
-
-video.src=
-videoPath;
-
-
-
-video.load();
-
-
-
-currentVideo=
-videoPath;
-
-
-
-}
-
-
-
-
-
-
-video.currentTime=0;
-
-
-
-
-
-video.play()
-
-.then(()=>{
-
-
-
-console.log(
-"播放成功"
-);
-
-
-
-videoPlane.setAttribute(
-
-"visible",
-
-"true"
-
-);
-
-
-
-})
-
-.catch(err=>{
-
-
-console.log(
-"播放失败",
-
-err
-
-);
-
-
-
-tip.innerHTML=
-"点击屏幕播放";
-
-
-});
-
-
-
-}
-
-);
-
-
-
-
-
-
-
-
-
-/*
-========================
-识别丢失
-========================
-*/
-
-
-target.addEventListener(
-
-"targetLost",
-
-function(){
-
-
-console.log(
-"目标丢失"
-);
-
-
-// 不隐藏视频
-// 防止轻微抖动闪烁
-
-
-}
-
-);
-
-
-
-}
-
-
-
-</script>
-
-
-
-
-
-
+  <div id="tip">正在启动摄像头...</div>
+
+  <a-scene
+    style="background:transparent;"
+    mindar-image="imageTargetSrc: assets/targets.mind; autoStart:true; filterMinCF:0.0001; filterBeta:0.001; uiLoading:no; uiScanning:no; uiError:yes;"
+    embedded
+    renderer="antialias:true; alpha:true; colorManagement:true; physicallyCorrectLights:true;"
+    vr-mode-ui="enabled:false"
+    device-orientation-permission-ui="enabled:false">
+
+    <a-assets>
+      <!-- 视频元素，JS会自动设置src -->
+      <video id="arVideo" loop playsinline webkit-playsinline preload="auto" muted crossorigin="anonymous"></video>
+    </a-assets>
+
+    <a-camera position="0 0 0" look-controls="enabled:false"></a-camera>
+
+    <!-- 第一个识别目标 -->
+    <a-entity id="target1" mindar-image-target="targetIndex:0">
+      <a-plane
+        id="videoPlane"
+        width="1"
+        height="0.56"
+        position="0 0 0.03"
+        visible="false"
+        material="shader:flat; src:#arVideo; side:double;"></a-plane>
+    </a-entity>
+
+    <!-- 如果你有第二张识别图，可以继续添加 -->
+    <!--
+    <a-entity id="target2" mindar-image-target="targetIndex:1">
+      <a-plane ...></a-plane>
+    </a-entity>
+    -->
+
+  </a-scene>
+
+  <script>
+    window.onload = function() {
+      const target = document.querySelector("#target1"); // 修正id
+      const video = document.querySelector("#arVideo");
+      const videoPlane = document.querySelector("#videoPlane");
+      const tip = document.querySelector("#tip");
+      let currentVideo = "";
+      let videoReady = false;
+
+      tip.innerHTML = "请扫描孟良崮遗址";
+
+      // 点击屏幕：开启声音（如果视频正在播放）
+      document.body.addEventListener("click", function() {
+        if (video.muted) {
+          video.muted = false;
+          console.log("声音已开启");
+        }
+      });
+
+      // 识别成功
+      target.addEventListener("targetFound", function(event) {
+        console.log("识别成功", event.detail);
+
+        // MindAR 使用 targetIndex
+        const targetIndex = event.detail.targetIndex !== undefined ? event.detail.targetIndex : 0;
+        const videoNumber = targetIndex + 1;  // 视频文件从1开始编号
+        const videoPath = "assets/video" + videoNumber + ".mp4";
+
+        console.log("加载视频:", videoPath);
+        tip.innerHTML = "识别成功，播放视频";
+
+        if (currentVideo !== videoPath) {
+          // 切换新视频
+          video.pause();
+          video.src = videoPath;
+          video.load();
+          currentVideo = videoPath;
+          videoReady = false;
+
+          // 等待视频可播放
+          video.addEventListener("loadeddata", function onLoaded() {
+            videoReady = true;
+            video.currentTime = 0;
+            // 保持静音自动播放
+            video.muted = true;
+            video.play().then(() => {
+              videoPlane.setAttribute("visible", "true");
+            }).catch(err => {
+              console.warn("自动播放失败", err);
+              tip.innerHTML = "点击屏幕播放";
+            });
+            video.removeEventListener("loadeddata", onLoaded);
+          });
+
+          // 视频加载错误
+          video.addEventListener("error", function onError() {
+            console.error("视频加载失败:", videoPath);
+            tip.innerHTML = "视频加载失败，请检查文件路径";
+            video.removeEventListener("error", onError);
+          });
+
+        } else {
+          // 同一视频，直接重播
+          video.currentTime = 0;
+          video.muted = true; // 保证自动播放
+          video.play().then(() => {
+            videoPlane.setAttribute("visible", "true");
+          }).catch(err => {
+            console.warn("播放失败", err);
+            tip.innerHTML = "点击屏幕播放";
+          });
+        }
+      });
+
+      // 识别丢失（不隐藏视频，防止抖动）
+      target.addEventListener("targetLost", function() {
+        console.log("目标丢失");
+      });
+    };
+  </script>
 </body>
-
-
 </html>
