@@ -7,7 +7,7 @@
 <meta charset="utf-8">
 
 <meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
 
 <title>
@@ -15,41 +15,68 @@ content="width=device-width, initial-scale=1.0">
 </title>
 
 
-<script src="
-https://aframe.io/releases/1.5.0/aframe.min.js">
+<!-- A-Frame -->
+<script src="https://aframe.io/releases/1.5.0/aframe.min.js">
 </script>
 
 
-<script src="
-https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js">
+<!-- MindAR -->
+<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js">
 </script>
+
 
 
 <style>
 
+
 body{
+
 margin:0;
+
 overflow:hidden;
+
+font-family:"Microsoft YaHei";
+
 }
 
+
+
+/* 顶部提示 */
 
 #tip{
 
+
 position:absolute;
+
 
 top:30px;
 
+
+left:0;
+
+
 width:100%;
+
 
 text-align:center;
 
-font-size:20px;
+
+font-size:22px;
+
 
 color:white;
 
-z-index:10;
+
+z-index:999;
+
+
+text-shadow:
+0 0 5px black;
+
 
 }
+
+
 
 </style>
 
@@ -58,12 +85,14 @@ z-index:10;
 
 
 
+
 <body>
+
 
 
 <div id="tip">
 
-请扫描民兵支前图片
+正在启动AR，请稍候...
 
 </div>
 
@@ -75,7 +104,15 @@ z-index:10;
 
 mindar-image="
 
-imageTargetSrc:assets/target.mind;
+imageTargetSrc:assets/targets.mind;
+
+autoStart:true;
+
+uiLoading:yes;
+
+uiScanning:yes;
+
+uiError:yes;
 
 "
 
@@ -87,18 +124,30 @@ color-space="sRGB"
 
 
 renderer="
-colorManagement:true
+
+colorManagement:true;
+
 "
 
 
 vr-mode-ui="
+
 enabled:false
+
 "
 
+
+device-orientation-permission-ui="
+
+enabled:false
+
+"
 
 
 >
 
+
+<!-- 视频资源 -->
 
 <a-assets>
 
@@ -113,13 +162,17 @@ loop
 
 muted
 
+autoplay
+
 playsinline
 
-webkit-playsinline>
+webkit-playsinline
 
+preload="auto"
+
+>
 
 </video>
-
 
 
 </a-assets>
@@ -127,23 +180,36 @@ webkit-playsinline>
 
 
 
+
+<!-- 摄像机 -->
+
 <a-camera
 
 position="0 0 0"
 
-look-controls="enabled:false">
+look-controls="enabled:false"
+
+>
 
 </a-camera>
 
 
 
 
+
+
+<!-- 图片识别目标 -->
+
+
 <a-entity
 
-mindar-image-target="
-targetIndex:0
-">
+mindar-image-target="targetIndex:0"
 
+>
+
+
+
+<!-- 视频覆盖区域 -->
 
 <a-video
 
@@ -151,15 +217,17 @@ targetIndex:0
 src="#arVideo"
 
 
-width="1"
+width="2"
 
 
-height="0.56"
+height="1.12"
 
 
-position="
-0 0 0.01
-"
+position="0 0 0.05"
+
+
+rotation="0 0 0"
+
 
 >
 
@@ -172,7 +240,10 @@ position="
 
 
 
+
 </a-scene>
+
+
 
 
 
@@ -181,33 +252,103 @@ position="
 <script>
 
 
-let target=document.querySelector(
+document.addEventListener(
+"DOMContentLoaded",
+
+()=>{
+
+
+let target =
+document.querySelector(
 "[mindar-image-target]"
 );
 
 
-let video=document.querySelector(
+
+let video =
+document.querySelector(
 "#arVideo"
 );
 
 
 
+let tip =
+document.querySelector(
+"#tip"
+);
+
+
+
+
+
+// 页面启动
+
+tip.innerHTML=
+"请扫描民兵支前图片";
+
+
+
+
+
+// 识别成功
+
+
 target.addEventListener(
+
 "targetFound",
+
 ()=>{
 
 
 console.log(
-"识别成功"
+"AR识别成功"
 );
 
 
-video.play();
+
+alert(
+"识别成功，正在播放历史复原视频"
+);
 
 
-document.querySelector("#tip")
-.innerHTML=
-"民兵支前历史复原";
+
+tip.innerHTML=
+"民兵支前历史场景复原";
+
+
+
+
+
+video.play()
+
+.then(()=>{
+
+
+console.log(
+"视频播放成功"
+);
+
+
+})
+
+.catch(
+(error)=>{
+
+
+console.log(
+"视频播放失败",
+error
+);
+
+
+alert(
+"视频播放失败，请点击屏幕后重试"
+);
+
+
+}
+
+);
 
 
 
@@ -217,12 +358,35 @@ document.querySelector("#tip")
 
 
 
+
+
+
+// 离开识别范围
+
+
 target.addEventListener(
+
 "targetLost",
+
 ()=>{
 
 
+console.log(
+"目标丢失"
+);
+
+
+tip.innerHTML=
+"请重新扫描民兵支前图片";
+
+
 video.pause();
+
+
+}
+
+);
+
 
 
 }
@@ -236,5 +400,6 @@ video.pause();
 
 
 </body>
+
 
 </html>
