@@ -38,9 +38,10 @@ height:100%;
 
 overflow:hidden;
 
-background:black;
+background:transparent;
 
 }
+
 
 
 /* AR全屏 */
@@ -89,7 +90,6 @@ Arial,
 }
 
 
-
 </style>
 
 
@@ -108,6 +108,7 @@ Arial,
 正在启动摄像头...
 
 </div>
+
 
 
 
@@ -142,9 +143,20 @@ embedded
 
 
 
+
 renderer="
 
 colorManagement:true;
+
+alpha:true;
+
+"
+
+
+
+background="
+
+transparent:true;
 
 "
 
@@ -163,10 +175,11 @@ device-orientation-permission-ui="enabled:false"
 
 
 
+
+
+
 <a-assets>
 
-
-<!-- 视频 -->
 
 <video
 
@@ -197,7 +210,7 @@ crossorigin="anonymous"
 
 
 
-<!-- 摄像机 -->
+
 
 <a-camera
 
@@ -215,7 +228,7 @@ look-controls="enabled:false"
 
 
 
-<!-- 图片目标 -->
+
 
 <a-entity
 
@@ -227,7 +240,11 @@ mindar-image-target="targetIndex:0"
 
 
 
-<!-- 调试平面 -->
+
+
+
+
+<!-- 测试层 -->
 
 <a-plane
 
@@ -253,15 +270,14 @@ position="0 0 0"
 
 
 
-<!-- AR视频 -->
 
-<a-video
+
+<!-- AR视频层 -->
+
+<a-plane
 
 
 id="videoPlane"
-
-
-src="#arVideo"
 
 
 width="1"
@@ -282,6 +298,8 @@ material="
 
 shader:flat;
 
+src:#arVideo;
+
 side:double;
 
 "
@@ -289,12 +307,16 @@ side:double;
 >
 
 
-</a-video>
+</a-plane>
+
+
+
 
 
 
 
 </a-entity>
+
 
 
 
@@ -310,8 +332,8 @@ side:double;
 
 
 
-<script>
 
+<script>
 
 
 window.onload=function(){
@@ -322,15 +344,12 @@ let target =
 document.querySelector("#target");
 
 
-
 let video =
 document.querySelector("#arVideo");
 
 
-
 let videoPlane =
 document.querySelector("#videoPlane");
-
 
 
 let tip =
@@ -338,11 +357,7 @@ document.querySelector("#tip");
 
 
 
-
-
 let unlocked=false;
-
-
 
 
 
@@ -358,12 +373,10 @@ tip.innerHTML=
 
 
 /*
-=================================
-第一次点击页面
-解锁手机浏览器声音权限
-=================================
+================================
+首次点击解锁声音
+================================
 */
-
 
 
 document.body.addEventListener(
@@ -381,13 +394,13 @@ return;
 video.muted=false;
 
 
+
 video.play()
 
 .then(()=>{
 
 
 video.pause();
-
 
 video.currentTime=0;
 
@@ -396,7 +409,7 @@ unlocked=true;
 
 
 console.log(
-"声音权限已解锁"
+"声音解锁成功"
 );
 
 
@@ -420,10 +433,6 @@ err
 });
 
 
-
-},
-{
-once:false
 }
 
 );
@@ -437,9 +446,9 @@ once:false
 
 
 /*
-=================================
+================================
 识别成功
-=================================
+================================
 */
 
 
@@ -448,6 +457,7 @@ target.addEventListener(
 "targetFound",
 
 function(){
+
 
 
 console.log(
@@ -462,18 +472,17 @@ tip.innerHTML=
 
 
 
-
-// 从头播放
+// 从头开始
 
 video.currentTime=0;
 
 
 
-// 播放视频
 
 video.play()
 
 .then(()=>{
+
 
 
 console.log(
@@ -482,7 +491,8 @@ console.log(
 
 
 
-// 显示AR视频
+
+// 显示视频
 
 videoPlane.setAttribute(
 
@@ -495,7 +505,8 @@ videoPlane.setAttribute(
 
 
 
-// 强制刷新纹理
+
+// 刷新纹理
 
 setTimeout(()=>{
 
@@ -523,21 +534,18 @@ videoPlane.components.material.material.map.needsUpdate=true;
 
 })
 
-
-
 .catch(err=>{
 
 
 console.log(
-"视频播放失败",
+"播放失败",
 err
 );
 
 
 
 tip.innerHTML=
-"点击屏幕播放视频";
-
+"点击屏幕播放";
 
 
 });
@@ -557,9 +565,9 @@ tip.innerHTML=
 
 
 /*
-=================================
+================================
 目标丢失
-=================================
+================================
 */
 
 
@@ -580,11 +588,10 @@ tip.innerHTML=
 "请重新扫描";
 
 
+// 不停止视频
+// 避免轻微丢失重新加载
 
-video.pause();
 
-
-//隐藏视频
 
 videoPlane.setAttribute(
 
@@ -604,15 +611,14 @@ videoPlane.setAttribute(
 
 
 
-
 }
 
 
 
-
-
-
 </script>
+
+
+
 
 
 
