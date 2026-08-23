@@ -268,6 +268,8 @@ webkit-playsinline
 
 preload="auto"
 
+muted
+
 crossorigin="anonymous"
 
 >
@@ -310,15 +312,39 @@ look-controls="enabled:false"
 
 -->
 
+
 <a-entity
 
-id="target"
+id="target1"
 
-mindar-image-target
+mindar-image-target="targetIndex:0"
 
 >
 
+<a-plane
 
+id="videoPlane"
+
+width="1"
+
+height="0.56"
+
+position="0 0 0.03"
+
+visible="false"
+
+material="
+shader:flat;
+src:#arVideo;
+side:double;
+"
+
+>
+
+</a-plane>
+
+
+</a-entity>
 
 
 
@@ -447,11 +473,19 @@ return;
 
 
 
+document.body.addEventListener(
+
+"click",
+
+function(){
+
+
 video.muted=false;
 
 
+}
 
-video.play()
+);
 
 .then(()=>{
 
